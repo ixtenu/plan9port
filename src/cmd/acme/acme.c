@@ -1055,7 +1055,7 @@ iconinit(void)
 		textcols[HTEXT] = allocimage(display, Rect(0,0,1,1), RGBA32, 1, 0xdcdcccff);
 	}
 
-	r = Rect(0, 0, Scrollwid+ButtonBorder, font->height+1);
+	r = Rect(0, 0, Scrollwid, font->height+1);
 	if(button && eqrect(r, button->r))
 		return;
 
@@ -1067,13 +1067,11 @@ iconinit(void)
 
 	button = allocimage(display, r, screen->chan, 0, DNofill);
 	draw(button, r, tagcols[BACK], nil, r.min);
-	r.max.x -= ButtonBorder;
 	border(button, r, ButtonBorder, tagcols[BORD], ZP);
 
 	r = button->r;
 	modbutton = allocimage(display, r, screen->chan, 0, DNofill);
 	draw(modbutton, r, tagcols[BACK], nil, r.min);
-	r.max.x -= ButtonBorder;
 	border(modbutton, r, ButtonBorder, tagcols[BORD], ZP);
 	r = insetrect(r, ButtonBorder);
 	tmp = allocimage(display, Rect(0,0,1,1), RGBA32, 1, 0x65737eff);
