@@ -21,6 +21,24 @@ enum{
 	TABDIR = 3	/* width of tabs in directory windows */
 };
 
+enum{
+#ifdef __APPLE__
+	Kcopy = Kcmd+'c', /* %C: copy */
+	Kpaste = Kcmd+'v', /* %V: paste */
+	Kcut = Kcmd+'x', /* %X: cut */
+	Kundo = Kcmd+'z', /* %Z: undo */
+	Kredo = Kcmd+'Z', /* %-shift-Z: redo */
+	Ksave = Kcmd+'s', /* %S: save */
+#else
+	Kcopy = 0x03, /* ^C: copy */
+	Kpaste = 0x16, /* ^V: paste */
+	Kcut = 0x18, /* ^X: cut */
+	Kundo = 0x1a, /* ^Z: undo */
+	Kredo = 0x19, /* ^Y: redo */
+	Ksave = 0x13, /* ^S: save */
+#endif
+};
+
 void
 textinit(Text *t, File *f, Rectangle r, Reffont *rf, Image *cols[NCOL])
 {
@@ -784,23 +802,19 @@ texttype(Text *t, Rune r)
 			q0++;
 		textshow(t, q0, q0, TRUE);
 		return;
-	case 0x03:	/* ^C: copy */
-	case Kcmd+'c':	/* %C: copy */
+	case Kcopy:
 		typecommit(t);
 		cut(t, t, nil, TRUE, FALSE, nil, 0);
 		return;
-	case 0x1a:	/* ^Z: undo */
-	case Kcmd+'z':	/* %Z: undo */
+	case Kundo:
 	 	typecommit(t);
 		undo(t, nil, nil, TRUE, 0, nil, 0);
 		return;
-	case 0x19:	/* ^Y: redo */
-	case Kcmd+'Z':	/* %-shift-Z: redo */
+	case Kredo:
 	 	typecommit(t);
 		undo(t, nil, nil, FALSE, 0, nil, 0);
 		return;
-	case 0x13:	/* ^S: save */
-	case Kcmd+'s':	/* %s: save */
+	case Ksave:
 		typecommit(t);
 		put(&(t->w)->body, nil, nil, XXX, XXX, nil, 0);
 		return;
@@ -828,8 +842,7 @@ texttype(Text *t, Rune r)
 	}
 	/* cut/paste must be done after the seq++/filemark */
 	switch(r){
-	case 0x18:	/* ^X: cut */
-	case Kcmd+'x':	/* %X: cut */
+	case Kcut:
 		typecommit(t);
 		if(t->what == Body){
 			seq++;
@@ -839,8 +852,7 @@ texttype(Text *t, Rune r)
 		textshow(t, t->q0, t->q0, 1);
 		t->iq1 = t->q0;
 		return;
-	case 0x16:	/* ^V: paste */
-	case Kcmd+'v':	/* %V: paste */
+	case Kpaste:
 		typecommit(t);
 		if(t->what == Body){
 			seq++;
